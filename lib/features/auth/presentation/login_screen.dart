@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/auth_view_model.dart';
+import '../presentation/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -156,6 +157,58 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 16),
 
+                  // Divider OR
+                  Row(
+                    children: const [
+                      Expanded(child: Divider(thickness: 1)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ),
+                      Expanded(child: Divider(thickness: 1)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Google Login Button (black&white style)
+                  SizedBox(
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed: authVm.isLoading ? null : _onGoogleLogin,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.black87, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            Icons.g_mobiledata,
+                            size: 28,
+                            color: Colors.black,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Continue with Google',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -163,5 +216,22 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _onGoogleLogin() async {
+    final authVm = context.read<AuthViewModel>();
+    await authVm.loginWithGoogle();
+
+    if (authVm.isLoggedIn) {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } else if (authVm.errorMessage != null && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(authVm.errorMessage!)));
+    }
   }
 }

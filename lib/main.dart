@@ -17,13 +17,9 @@ class ChronosApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
+        Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider<AuthViewModel>(
-          create: (context) => AuthViewModel(
-            context.read<AuthService>(),
-          ),
+          create: (context) => AuthViewModel(context.read<AuthService>()),
         ),
       ],
       child: MaterialApp(
