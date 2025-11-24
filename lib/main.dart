@@ -1,3 +1,5 @@
+import 'package:fe_chronos/features/chat/services/chat_service.dart';
+import 'package:fe_chronos/features/chat/viewmodels/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,12 @@ class ChronosApp extends StatelessWidget {
         Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => AuthViewModel(context.read<AuthService>()),
+        ),
+
+        Provider<ChatService>(create: (_) => ChatService()),
+        ChangeNotifierProvider<ChatViewModel>(
+          create: (context) =>
+              ChatViewModel(context.read<ChatService>())..loadInitialMessages(),
         ),
       ],
       child: MaterialApp(
