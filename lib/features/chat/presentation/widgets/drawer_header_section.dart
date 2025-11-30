@@ -56,7 +56,11 @@ class DrawerHeaderSection extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_note, size: 22),
             color: AppColors.sidebarText,
-            onPressed: onNewChat,
+            onPressed: () {
+              onNewChat();
+              // Close drawer
+              Navigator.of(context).pop();
+            },
             tooltip: 'New Chat',
           ),
         ],

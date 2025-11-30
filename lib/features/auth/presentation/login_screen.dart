@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/auth/presentation/register_screen.dart';
 import '../viewmodels/auth_view_model.dart';
-import '../../chat/presentation/chat_home_screen.dart';
 import 'package:chronus/core/layout/main_layout.dart';
 
 class LoginScreen extends StatefulWidget {

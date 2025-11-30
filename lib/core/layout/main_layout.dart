@@ -3,8 +3,9 @@ import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/chat/presentation/chat_screen.dart';
 import 'package:chronus/features/calendar/presentation/calendar_screen.dart';
 import 'package:chronus/features/email/presentation/email_screen.dart';
-import 'package:chronus/features/chat/presentation/widgets/chat_drawer.dart';
 import 'package:chronus/features/chat/presentation/widgets/drawer_conversation_list.dart';
+import 'package:provider/provider.dart';
+import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -28,10 +29,19 @@ class _MainLayoutState extends State<MainLayout> {
   }
 
   void _startNewChat() {
+    // Reset chat via ViewModel
+    context.read<ChatViewModel>().startNewChat();
+
+    // Switch to chat module
     setState(() {
       _chatKey = UniqueKey();
       _currentModule = AppModule.chat;
     });
+
+    // Close drawer if open (using canPop to avoid Scaffold.of error)
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   String _getAppBarTitle() {

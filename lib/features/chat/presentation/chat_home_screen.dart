@@ -16,16 +16,20 @@ class ChatHomeScreen extends StatefulWidget {
 
 class _ChatHomeScreenState extends State<ChatHomeScreen> {
   Key _chatKey = UniqueKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _startNewChat() {
     setState(() {
       _chatKey = UniqueKey();
     });
+    // Close drawer after starting new chat
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.neutralWhite,
       drawer: ChatDrawer(
         onNewChat: _startNewChat,
@@ -51,7 +55,11 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_note, color: AppColors.neutralInk),
-            onPressed: _startNewChat,
+            onPressed: () {
+              setState(() {
+                _chatKey = UniqueKey();
+              });
+            },
             tooltip: 'New Chat',
           ),
         ],

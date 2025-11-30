@@ -5,11 +5,6 @@ import 'drawer_conversation_list.dart';
 import 'drawer_navigation_section.dart';
 import 'drawer_profile_section.dart';
 
-/// Chat Drawer - Contains:
-/// 1. Header with logo
-/// 2. Conversation history
-/// 3. Navigation items (Email, Calendar)
-/// 4. Profile section at bottom
 class ChatDrawer extends StatelessWidget {
   final VoidCallback onNewChat;
 
@@ -21,29 +16,30 @@ class ChatDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppColors.neutralWhite,
+      backgroundColor: AppColors.sidebarBg,
       child: SafeArea(
         child: Column(
           children: [
-            // Header with logo and new chat button
-            DrawerHeaderSection(onNewChat: onNewChat),
+            // Header
+            DrawerHeaderSection(
+              onNewChat: onNewChat,
+            ),
+            const SizedBox(height: 16),
 
-            const Divider(height: 1, color: AppColors.mainBorder),
-
-            // Conversation history (scrollable)
-            const Expanded(
+            // Conversation List
+            Expanded(
               child: DrawerConversationList(),
             ),
 
-            const Divider(height: 1, color: AppColors.mainBorder),
+            const Divider(color: AppColors.sidebarBorder, height: 1),
 
-            // Navigation to other screens
-            const DrawerNavigationSection(),
+            // Navigation Section
+            DrawerNavigationSection(),
 
-            const Divider(height: 1, color: AppColors.mainBorder),
+            const Divider(color: AppColors.sidebarBorder, height: 1),
 
-            // Profile section
-            const DrawerProfileSection(),
+            // Profile Section
+            DrawerProfileSection(),
           ],
         ),
       ),
