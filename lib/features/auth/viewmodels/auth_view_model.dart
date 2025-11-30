@@ -1,4 +1,4 @@
-import 'package:fe_chronos/features/auth/services/auth_service.dart';
+import 'package:chronus/features/auth/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +42,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  /// Google Sign-In
+  /// Google Sign-In (Native SDK)
   Future<void> loginWithGoogle() async {
     _errorMessage = null;
     _isLoading = true;

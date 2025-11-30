@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:fe_chronos/main.dart';
+import 'package:chronus/main.dart';
 
 void main() {
   testWidgets('Chronos app smoke test', (WidgetTester tester) async {

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:fe_chronos/features/chat/models/message.dart';
+import 'package:chronus/features/chat/models/message.dart';
 
 class ChatService {
   /// Lấy lịch sử chat mock
@@ -18,8 +18,8 @@ class ChatService {
         time: '09:31',
       ),
       ChatMessage(
-        text: 'Yes Madam!', 
-        isUser: false, 
+        text: 'Yes Madam!',
+        isUser: false,
         time: '09:31'),
     ];
   }

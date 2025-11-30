@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fe_chronos/core/theme/app_colors.dart';
-import 'package:fe_chronos/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:chronus/core/theme/app_colors.dart';
+import 'package:chronus/features/onboarding/presentation/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

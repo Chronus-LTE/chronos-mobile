@@ -1,4 +1,4 @@
-import 'package:fe_chronos/features/chat/models/message.dart';
+import 'package:chronus/features/chat/models/message.dart';
 import 'package:flutter/foundation.dart';
 import '../services/chat_service.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fe_chronos/core/theme/app_colors.dart';
+import 'package:chronus/core/theme/app_colors.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../../home/presentation/home_screen.dart';
 
@@ -452,6 +452,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: authVm.isLoading ? null : _onGoogleSignUp,
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.sidebarText,
+                        backgroundColor: AppColors.neutralWhite,
                         side: const BorderSide(color: AppColors.mainBorder, width: 1.5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -459,24 +460,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.g_mobiledata,
-                            size: 28,
-                            color: AppColors.sidebarText,
+                        children: [
+                          // Google Logo
+                          Image.network(
+                            'https://www.google.com/favicon.ico',
+                            height: 24,
+                            width: 24,
+                            errorBuilder: (context, error, stackTrace) => const Icon(
+                              Icons.g_mobiledata,
+                              size: 28,
+                              color: AppColors.sidebarText,
+                            ),
                           ),
-                          SizedBox(width: 8),
-                          Text(
+                          const SizedBox(width: 12),
+                          const Text(
                             'Continue with Google',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
+
 
                   const SizedBox(height: 32),
 

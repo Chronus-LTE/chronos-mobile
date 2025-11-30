@@ -1,4 +1,4 @@
-package com.example.fe_chronos
+package com.chronus.app
 
 import io.flutter.embedding.android.FlutterActivity
 

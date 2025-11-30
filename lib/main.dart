@@ -1,6 +1,6 @@
-import 'package:fe_chronos/features/chat/services/chat_service.dart';
-import 'package:fe_chronos/features/chat/viewmodels/chat_view_model.dart';
-import 'package:fe_chronos/features/onboarding/presentation/splash_screen.dart';
+import 'package:chronus/features/chat/services/chat_service.dart';
+import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
+import 'package:chronus/features/onboarding/presentation/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

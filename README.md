@@ -1,4 +1,4 @@
-# fe_chronos
+# chronus
 
 A new Flutter project.
 

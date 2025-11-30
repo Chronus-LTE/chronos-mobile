@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fe_chronos/core/theme/app_colors.dart';
-import 'package:fe_chronos/features/auth/presentation/login_screen.dart';
-import 'package:fe_chronos/features/auth/presentation/register_screen.dart';
+import 'package:chronus/core/theme/app_colors.dart';
+import 'package:chronus/features/auth/presentation/login_screen.dart';
+import 'package:chronus/features/auth/presentation/register_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

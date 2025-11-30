@@ -1,5 +1,5 @@
-import 'package:fe_chronos/features/chat/models/message.dart';
-import 'package:fe_chronos/features/chat/viewmodels/chat_view_model.dart';
+import 'package:chronus/features/chat/models/message.dart';
+import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
