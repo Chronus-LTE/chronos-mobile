@@ -6,6 +6,7 @@ import 'package:chronus/features/email/presentation/email_screen.dart';
 import 'package:chronus/features/chat/presentation/widgets/drawer_conversation_list.dart';
 import 'package:provider/provider.dart';
 import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
+import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -289,7 +290,7 @@ class _ProfileSection extends StatelessWidget {
         child: Icon(Icons.person, color: AppColors.neutralWhite, size: 20),
       ),
       title: const Text(
-        'Profile',
+        'Profile (Tap to Logout)',
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w500,
@@ -297,7 +298,28 @@ class _ProfileSection extends StatelessWidget {
         ),
       ),
       onTap: () {
-        // TODO: Navigate to profile
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Logout'),
+            content: const Text('Are you sure you want to logout?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  context.read<AuthViewModel>().logout();
+                  // Navigate to login is handled by AuthGate or we can force it
+                  Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                },
+                child: const Text('Logout', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+        );
       },
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     );

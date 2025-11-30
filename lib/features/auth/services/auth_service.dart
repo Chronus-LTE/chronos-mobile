@@ -21,6 +21,12 @@ class AuthService {
       'email',
       'profile',
       'openid',
+      // Scopes for Chronus features:
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/tasks',
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/gmail.send',
+      'https://www.googleapis.com/auth/gmail.modify',
     ],
     serverClientId: '740558145310-ehpe5h14crocaas9hl1htmkdu87eofk6.apps.googleusercontent.com',
   );
@@ -87,43 +93,46 @@ class AuthService {
     }
   }
 
-  /// Google Sign-In
-  /// Endpoint: POST /auth/google/verify
+  /// Google Sign-In (Mobile)
+  /// Endpoint: POST /auth/google/mobile
+  /// Uses serverAuthCode to allow backend to get refresh_token
   Future<bool> loginWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
+        // User cancelled sign-in
         return false;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final String? idToken = googleAuth.idToken;
+      // Get server auth code (NOT idToken)
+      final String? serverAuthCode = googleUser.serverAuthCode;
 
-      if (idToken == null) {
+      if (serverAuthCode == null) {
+        print('Error: Failed to get server auth code');
         return false;
       }
 
+      // Send server auth code to backend
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/google/verify'),
+        Uri.parse('$baseUrl/auth/google/mobile'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'id_token': idToken,
-          'email': googleUser.email,
-          'name': googleUser.displayName,
+          'server_auth_code': serverAuthCode,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        _authToken = data['token'] ?? data['access_token'];
+        _authToken = data['access_token'];
         await _saveToken(_authToken);
         return true;
+      } else {
+        print('Google Sign-In Error: ${response.statusCode} - ${response.body}');
+        return false;
       }
-
-      return false;
     } catch (e) {
-      print('Google Login Error: $e');
+      print('Google Sign-In Error: $e');
       return false;
     }
   }

@@ -4,9 +4,9 @@ import 'package:chronus/features/onboarding/presentation/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/theme/app_theme.dart';
-import 'features/auth/services/auth_service.dart';
-import 'features/auth/viewmodels/auth_view_model.dart';
+import 'package:chronus/core/theme/app_colors.dart';
+import 'package:chronus/features/auth/services/auth_service.dart';
+import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
 
 void main() {
   runApp(const ChronosApp());
@@ -33,7 +33,16 @@ class ChronosApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Chronus',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
+        theme: ThemeData(
+          primaryColor: AppColors.clay600,
+          scaffoldBackgroundColor: AppColors.neutralWhite,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.clay600,
+            primary: AppColors.clay600,
+            surface: AppColors.neutralWhite,
+          ),
+        ),
         home: const SplashScreen(),
       ),
     );

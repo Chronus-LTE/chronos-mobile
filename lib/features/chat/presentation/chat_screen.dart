@@ -16,6 +16,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
 
+  int _previousMessageCount = 0;
+
   @override
   void dispose() {
     _textController.dispose();
@@ -55,36 +57,45 @@ class _ChatScreenState extends State<ChatScreen> {
     final vm = context.watch<ChatViewModel>();
     final messages = vm.messages;
 
-    // Auto-scroll when new messages arrive
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messages.isNotEmpty) {
-        _scrollToBottom();
-      }
-    });
+    // Auto-scroll only when message count changes
+    if (messages.length != _previousMessageCount) {
+      _previousMessageCount = messages.length;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (messages.isNotEmpty && _scrollController.hasClients) {
+          _scrollToBottom();
+        }
+      });
+    }
 
     return Column(
       children: [
         // Messages List
         Expanded(
-          child: messages.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+          child: vm.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.clay600),
                   ),
-                  itemCount: messages.length + (vm.isSending ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    // Show typing indicator as last item
-                    if (index == messages.length && vm.isSending) {
-                      return _buildTypingIndicator();
-                    }
+                )
+              : messages.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      itemCount: messages.length + (vm.isSending ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        // Show typing indicator as last item
+                        if (index == messages.length && vm.isSending) {
+                          return _buildTypingIndicator();
+                        }
 
-                    final msg = messages[index];
-                    return _buildMessageBubble(msg);
-                  },
-                ),
+                        final msg = messages[index];
+                        return _buildMessageBubble(msg);
+                      },
+                    ),
         ),
 
         const Divider(height: 1, color: AppColors.mainBorder),
