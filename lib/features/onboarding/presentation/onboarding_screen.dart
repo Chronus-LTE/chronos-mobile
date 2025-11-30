@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/onboarding/presentation/welcome_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -40,7 +42,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
-  void _navigateToWelcome() {
+  Future<void> _navigateToWelcome() async {
+    // Mark onboarding as completed
+    await context.read<AuthViewModel>().completeOnboarding();
+
+    if (!mounted) return;
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => const WelcomeScreen(),

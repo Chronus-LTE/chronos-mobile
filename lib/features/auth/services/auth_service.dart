@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  static const String _keyAuthToken = 'auth_token';
+  static const String _keyIsFirstTime = 'is_first_time';
+
   // Backend URL - thay đổi theo backend thực tế của bạn
   static String get baseUrl {
     if (Platform.isAndroid) {
@@ -42,6 +46,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _authToken = data['token'] ?? data['access_token'];
+        await _saveToken(_authToken);
         return true;
       }
       return false;
@@ -72,6 +77,7 @@ class AuthService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _authToken = data['token'] ?? data['access_token'];
+        await _saveToken(_authToken);
         return true;
       }
       return false;
@@ -111,6 +117,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _authToken = data['token'] ?? data['access_token'];
+        await _saveToken(_authToken);
         return true;
       }
 
@@ -125,8 +132,39 @@ class AuthService {
   Future<void> logout() async {
     _authToken = null;
     await _googleSignIn.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyAuthToken);
   }
 
   /// Get stored auth token
   String? get authToken => _authToken;
+
+  // --- Persistence Helpers ---
+
+  Future<void> _saveToken(String? token) async {
+    if (token == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyAuthToken, token);
+  }
+
+  /// Try to auto-login by checking stored token
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey(_keyAuthToken)) return false;
+
+    _authToken = prefs.getString(_keyAuthToken);
+    return _authToken != null;
+  }
+
+  /// Check if it's the first time the app is opened
+  Future<bool> isFirstTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyIsFirstTime) ?? true;
+  }
+
+  /// Mark onboarding as completed
+  Future<void> completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyIsFirstTime, false);
+  }
 }
