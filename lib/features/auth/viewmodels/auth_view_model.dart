@@ -65,4 +65,33 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Register new user
+  Future<void> register(String name, String email, String password) async {
+    _errorMessage = null;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final success = await _authService.register(
+        name: name,
+        email: email,
+        password: password,
+      );
+
+      if (success) {
+        _isLoggedIn = true;
+      } else {
+        _errorMessage = 'Registration failed. Please try again.';
+      }
+    } catch (e) {
+      _errorMessage = 'Something went wrong. Please try again.';
+      if (kDebugMode) {
+        print(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

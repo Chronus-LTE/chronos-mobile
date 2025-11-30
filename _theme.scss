@@ -1,0 +1,83 @@
+$chronus-font-primary: 'Inter', 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$chronus-font-secondary: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+$clay-50: #fffdf8;
+$clay-100: #fff8ee;
+$clay-150: #fff2e2;
+$clay-200: #ffeccd;
+$clay-300: #ffe2b3;
+$clay-400: #f5c785;
+$clay-500: #e5ad64;
+$clay-600: #c98938;
+$clay-700: #9a5f23;
+$clay-800: #6a3b16;
+$clay-900: #3a210c;
+$neutral-white: #ffffff;
+$neutral-ink: #1f1207;
+
+@function rgb-values($color) {
+  @return #{red($color)}, #{green($color)}, #{blue($color)};
+}
+
+:root {
+  --font-primary: #{$chronus-font-primary};
+  --font-secondary: #{$chronus-font-secondary};
+
+  --clay-50: #{$clay-50};
+  --clay-100: #{$clay-100};
+  --clay-150: #{$clay-150};
+  --clay-200: #{$clay-200};
+  --clay-300: #{$clay-300};
+  --clay-400: #{$clay-400};
+  --clay-500: #{$clay-500};
+  --clay-600: #{$clay-600};
+  --clay-700: #{$clay-700};
+  --clay-800: #{$clay-800};
+  --clay-900: #{$clay-900};
+  --neutral-white: #{$neutral-white};
+  --neutral-ink: #{$neutral-ink};
+
+  --clay-50-rgb: #{rgb-values($clay-50)};
+  --clay-100-rgb: #{rgb-values($clay-100)};
+  --clay-150-rgb: #{rgb-values($clay-150)};
+  --clay-200-rgb: #{rgb-values($clay-200)};
+  --clay-300-rgb: #{rgb-values($clay-300)};
+  --clay-400-rgb: #{rgb-values($clay-400)};
+  --clay-500-rgb: #{rgb-values($clay-500)};
+  --clay-600-rgb: #{rgb-values($clay-600)};
+  --clay-700-rgb: #{rgb-values($clay-700)};
+  --clay-800-rgb: #{rgb-values($clay-800)};
+  --neutral-white-rgb: #{rgb-values($neutral-white)};
+  --neutral-ink-rgb: #{rgb-values($neutral-ink)};
+
+  --panel-glow: rgba(var(--clay-200-rgb), 0.6);
+  --shadow-soft: 0 20px 60px rgba(var(--clay-300-rgb), 0.35);
+  --shadow-hard: 0 30px 80px rgba(var(--clay-500-rgb), 0.4);
+
+  /* Dark Theme Colors */
+  --dark-bg: #1a1614;
+  --dark-bg-gradient-center: #2c241b;
+  --dark-surface: #241e19;
+  --dark-border: rgba(255, 255, 255, 0.05);
+  --dark-input-bg: rgba(0, 0, 0, 0.2);
+  --dark-input-border: rgba(255, 255, 255, 0.1);
+  --dark-hover-bg: rgba(255, 255, 255, 0.08);
+
+  /* Sidebar & Layout Colors - Clean & Light */
+  --sidebar-bg: #f9f9f8;
+  --sidebar-border: #e5e5e0;
+  --sidebar-hover: #efefed;
+  --sidebar-active: #e8e8e5;
+  --sidebar-text: #2d2d2d;
+  --sidebar-text-secondary: #6b6b6b;
+  --sidebar-icon: #4a4a4a;
+
+  --main-bg: #ffffff;
+  --main-border: #e8e8e5;
+  --content-bg: #fafaf9;
+
+  /* Accent colors for navigation */
+  --nav-accent: #d4a574;
+  --nav-accent-hover: #c98938;
+}
+
