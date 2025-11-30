@@ -1,4 +1,4 @@
-import 'package:fe_chronos/features/chat/presentation/chat_screen.dart';
+import 'package:chronus/features/chat/presentation/chat_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {

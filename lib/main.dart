@@ -1,12 +1,12 @@
-import 'package:fe_chronos/features/chat/services/chat_service.dart';
-import 'package:fe_chronos/features/chat/viewmodels/chat_view_model.dart';
+import 'package:chronus/features/chat/services/chat_service.dart';
+import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
+import 'package:chronus/features/onboarding/presentation/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/auth/viewmodels/auth_view_model.dart';
-import 'features/auth/presentation/login_screen.dart';
 
 void main() {
   runApp(const ChronosApp());
@@ -34,7 +34,7 @@ class ChronosApp extends StatelessWidget {
         title: 'Chronos',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const LoginScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

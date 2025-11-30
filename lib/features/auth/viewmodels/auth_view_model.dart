@@ -1,4 +1,4 @@
-import 'package:fe_chronos/features/auth/services/auth_service.dart';
+import 'package:chronus/features/auth/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +42,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  /// Google Sign-In
+  /// Google Sign-In (Native SDK)
   Future<void> loginWithGoogle() async {
     _errorMessage = null;
     _isLoading = true;
@@ -57,6 +57,35 @@ class AuthViewModel extends ChangeNotifier {
       }
     } catch (e) {
       _errorMessage = 'Google login error. Please try again.';
+      if (kDebugMode) {
+        print(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Register new user
+  Future<void> register(String name, String email, String password) async {
+    _errorMessage = null;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final success = await _authService.register(
+        name: name,
+        email: email,
+        password: password,
+      );
+
+      if (success) {
+        _isLoggedIn = true;
+      } else {
+        _errorMessage = 'Registration failed. Please try again.';
+      }
+    } catch (e) {
+      _errorMessage = 'Something went wrong. Please try again.';
       if (kDebugMode) {
         print(e);
       }
