@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:chronus/core/layout/main_layout.dart';
+import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
+import 'package:chronus/features/onboarding/presentation/welcome_screen.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,20 +36,46 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    // Navigate to onboarding after animation
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 600),
-          ),
-        );
-      }
-    });
+    _checkNavigation();
+  }
+
+  Future<void> _checkNavigation() async {
+    // Wait for animation
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    if (!mounted) return;
+
+    final authVm = context.read<AuthViewModel>();
+
+    // Check login status and first time status concurrently
+    final results = await Future.wait([
+      authVm.checkLoginStatus(),
+      authVm.checkFirstTime(),
+    ]);
+
+    final isLoggedIn = results[0];
+    final isFirstTime = results[1];
+
+    if (!mounted) return;
+
+    Widget nextScreen;
+    if (isLoggedIn) {
+      nextScreen = const MainLayout();
+    } else if (isFirstTime) {
+      nextScreen = const OnboardingScreen();
+    } else {
+      nextScreen = const WelcomeScreen();
+    }
+
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 600),
+      ),
+    );
   }
 
   @override

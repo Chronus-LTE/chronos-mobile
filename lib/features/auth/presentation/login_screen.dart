@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/auth/presentation/register_screen.dart';
 import '../viewmodels/auth_view_model.dart';
-import '../../home/presentation/home_screen.dart';
+import 'package:chronus/core/layout/main_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -38,9 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (authVm.isLoggedIn) {
       // TODO: điều hướng sang màn hình chính của app
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Login success')));
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainLayout()),
+        );
       }
     } else if (authVm.errorMessage != null && mounted) {
       ScaffoldMessenger.of(
@@ -380,7 +380,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (authVm.isLoggedIn) {
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const MainLayout()),
         );
       }
     } else if (authVm.errorMessage != null && mounted) {

@@ -94,4 +94,33 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  /// Check if user is already logged in (via stored token)
+  Future<bool> checkLoginStatus() async {
+    _isLoading = true;
+    notifyListeners();
+
+    final success = await _authService.tryAutoLogin();
+    _isLoggedIn = success;
+
+    _isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
+  /// Check if this is the first time app launch
+  Future<bool> checkFirstTime() async {
+    return await _authService.isFirstTime();
+  }
+
+  /// Mark onboarding as completed
+  Future<void> completeOnboarding() async {
+    await _authService.completeOnboarding();
+  }
+
+  /// Logout
+  Future<void> logout() async {
+    await _authService.logout();
+    _isLoggedIn = false;
+    notifyListeners();
+  }
 }
