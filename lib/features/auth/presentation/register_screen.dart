@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import '../viewmodels/auth_view_model.dart';
-import '../../home/presentation/home_screen.dart';
+import '../../chat/presentation/chat_home_screen.dart';
+
+import 'package:chronus/core/layout/main_layout.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -53,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (authVm.isLoggedIn && mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainLayout()),
       );
     } else if (authVm.errorMessage != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -530,7 +532,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (authVm.isLoggedIn && mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainLayout()),
       );
     } else if (authVm.errorMessage != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

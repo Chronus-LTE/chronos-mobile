@@ -31,7 +31,7 @@ class ChronosApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Chronos',
+        title: 'Chronus',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         home: const SplashScreen(),
