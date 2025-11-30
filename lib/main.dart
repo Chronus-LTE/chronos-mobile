@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/auth/services/auth_service.dart';
 import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
+import 'package:chronus/features/calendar/services/calendar_service.dart';
+import 'package:chronus/features/calendar/viewmodels/calendar_view_model.dart';
 
 void main() {
   runApp(const ChronosApp());
@@ -28,6 +30,11 @@ class ChronosApp extends StatelessWidget {
         ChangeNotifierProvider<ChatViewModel>(
           create: (context) =>
               ChatViewModel(context.read<ChatService>())..loadInitialMessages(),
+        ),
+
+        Provider<CalendarService>(create: (_) => CalendarService()),
+        ChangeNotifierProvider<CalendarViewModel>(
+          create: (context) => CalendarViewModel(context.read<CalendarService>()),
         ),
       ],
       child: MaterialApp(
