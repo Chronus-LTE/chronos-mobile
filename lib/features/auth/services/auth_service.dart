@@ -105,20 +105,23 @@ class AuthService {
         return false;
       }
 
-      // Get server auth code (NOT idToken)
-      final String? serverAuthCode = googleUser.serverAuthCode;
+      // Get authentication details
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+      final String? accessToken = googleAuth.accessToken;
 
-      if (serverAuthCode == null) {
-        print('Error: Failed to get server auth code');
+      if (idToken == null) {
+        print('Error: Failed to get ID token');
         return false;
       }
 
-      // Send server auth code to backend
+      // Send tokens to backend
       final response = await http.post(
         Uri.parse('$baseUrl/auth/google/mobile'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'server_auth_code': serverAuthCode,
+          'id_token': idToken,
+          'access_token': accessToken,
         }),
       );
 
