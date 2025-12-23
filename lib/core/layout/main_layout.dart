@@ -3,10 +3,12 @@ import 'package:chronus/core/theme/app_colors.dart';
 import 'package:chronus/features/chat/presentation/chat_screen.dart';
 import 'package:chronus/features/calendar/presentation/calendar_screen.dart';
 import 'package:chronus/features/email/presentation/email_screen.dart';
+import 'package:chronus/features/email/presentation/widgets/email_folder_list.dart';
 import 'package:chronus/features/chat/presentation/widgets/drawer_conversation_list.dart';
 import 'package:provider/provider.dart';
 import 'package:chronus/features/chat/viewmodels/chat_view_model.dart';
 import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
+import 'package:chronus/features/email/viewmodels/email_view_model.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -136,6 +138,8 @@ class _MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final emailVm = context.watch<EmailViewModel>();
+
     return Drawer(
       backgroundColor: AppColors.neutralWhite,
       child: SafeArea(
@@ -146,12 +150,28 @@ class _MainDrawer extends StatelessWidget {
 
             const Divider(height: 1, color: AppColors.mainBorder),
 
-            // Conversation history (always show)
-            Expanded(
-              child: DrawerConversationList(
-                onConversationSelected: () => onModuleSelected(AppModule.chat),
-              ),
-            ),
+            // Conversation history (only show when in chat module)
+            if (currentModule == AppModule.chat)
+              Expanded(
+                child: DrawerConversationList(
+                  onConversationSelected: () => onModuleSelected(AppModule.chat),
+                ),
+              )
+            else if (currentModule == AppModule.email)
+              Expanded(
+                child: SingleChildScrollView(
+                  child: EmailFolderList(
+                    currentFolder: emailVm.currentFolder,
+                    onFolderSelected: (folder) {
+                      emailVm.switchFolder(folder);
+                      Navigator.pop(context);
+                    },
+                    unreadCount: emailVm.unreadCount,
+                  ),
+                ),
+              )
+            else
+              const Expanded(child: SizedBox()),
 
             const Divider(height: 1, color: AppColors.mainBorder),
 
