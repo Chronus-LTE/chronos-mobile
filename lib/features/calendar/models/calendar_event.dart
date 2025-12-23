@@ -12,7 +12,7 @@ class CalendarEvent {
     this.description,
     required this.startTime,
     required this.endTime,
-    this.color = '#C98938', // Default clay600
+    this.color = '#C98938',
   });
 
   CalendarEvent copyWith({

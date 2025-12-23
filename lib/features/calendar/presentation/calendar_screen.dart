@@ -17,17 +17,34 @@ class CalendarScreen extends StatelessWidget {
         children: [
           _buildHeader(context),
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    _buildCalendarGrid(context),
-                    const SizedBox(height: 24),
-                    _buildEventsList(context),
-                  ],
-                ),
-              ),
+            child: Consumer<CalendarViewModel>(
+              builder: (context, viewModel, _) {
+                if (viewModel.isLoading && viewModel.allEvents.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.clay600,
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: viewModel.refreshEvents,
+                  color: AppColors.clay600,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          _buildCalendarGrid(context),
+                          const SizedBox(height: 24),
+                          _buildEventsList(context),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -366,18 +383,41 @@ class CalendarScreen extends StatelessWidget {
   void _showDeleteConfirmation(BuildContext context, String eventId, CalendarViewModel viewModel) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Event'),
         content: const Text('Are you sure you want to delete this event?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              viewModel.deleteEvent(eventId);
-              Navigator.pop(context);
+            onPressed: () async {
+              // Close confirmation dialog
+              Navigator.pop(dialogContext);
+
+              // Show loading
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
+              final success = await viewModel.deleteEvent(eventId);
+
+              // Close loading dialog
+              if (context.mounted) Navigator.pop(context);
+
+              if (!success && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(viewModel.error ?? 'Failed to delete event'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),

@@ -6,14 +6,20 @@ class CalendarViewModel extends ChangeNotifier {
   final CalendarService _calendarService;
 
   CalendarViewModel(this._calendarService) {
-    _initializeSampleEvents();
+    _loadCurrentMonthEvents();
   }
 
   DateTime _selectedDate = DateTime.now();
   DateTime _focusedMonth = DateTime.now();
+  List<CalendarEvent> _allEvents = [];
+  bool _isLoading = false;
+  String? _error;
 
   DateTime get selectedDate => _selectedDate;
   DateTime get focusedMonth => _focusedMonth;
+  List<CalendarEvent> get allEvents => _allEvents;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
   void selectDate(DateTime date) {
     _selectedDate = date;
@@ -22,96 +28,202 @@ class CalendarViewModel extends ChangeNotifier {
 
   void changeMonth(int delta) {
     _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month + delta);
+    _loadCurrentMonthEvents();
     notifyListeners();
   }
 
-  List<CalendarEvent> get allEvents => _calendarService.getAllEvents();
-
-  List<CalendarEvent> get selectedDateEvents =>
-      _calendarService.getEventsForDate(_selectedDate);
-
-  List<CalendarEvent> get currentMonthEvents =>
-      _calendarService.getEventsForMonth(_focusedMonth.year, _focusedMonth.month);
-
-  bool hasEventsOnDate(DateTime date) {
-    return _calendarService.hasEventsOnDate(date);
+  List<CalendarEvent> get selectedDateEvents {
+    return _allEvents.where((event) {
+      final eventDate = DateTime(
+        event.startTime.year,
+        event.startTime.month,
+        event.startTime.day,
+      );
+      final targetDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+      );
+      return eventDate.isAtSameMomentAs(targetDate);
+    }).toList();
   }
 
-  void createEvent({
+  List<CalendarEvent> get currentMonthEvents {
+    return _allEvents.where((event) {
+      return event.startTime.year == _focusedMonth.year &&
+          event.startTime.month == _focusedMonth.month;
+    }).toList();
+  }
+
+  bool hasEventsOnDate(DateTime date) {
+    return _allEvents.any((event) {
+      final eventDate = DateTime(
+        event.startTime.year,
+        event.startTime.month,
+        event.startTime.day,
+      );
+      final targetDate = DateTime(date.year, date.month, date.day);
+      return eventDate.isAtSameMomentAs(targetDate);
+    });
+  }
+
+  /// Load events for current month
+  Future<void> _loadCurrentMonthEvents() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final events = await _calendarService.getEventsForMonth(
+        _focusedMonth.year,
+        _focusedMonth.month,
+      );
+      _allEvents = events;
+      _error = null;
+    } catch (e) {
+      _error = 'Failed to load events: $e';
+      print(_error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Refresh events
+  Future<void> refreshEvents() async {
+    await _loadCurrentMonthEvents();
+  }
+
+  /// Create new event
+  Future<bool> createEvent({
     required String title,
     String? description,
     required DateTime startTime,
     required DateTime endTime,
     String? color,
-  }) {
-    _calendarService.createEvent(
-      title: title,
-      description: description,
-      startTime: startTime,
-      endTime: endTime,
-      color: color,
-    );
+  }) async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
+
+    try {
+      final event = await _calendarService.createEvent(
+        title: title,
+        description: description,
+        startTime: startTime,
+        endTime: endTime,
+        color: color,
+      );
+
+      if (event != null) {
+        // Add to local list if it's in the current month
+        if (event.startTime.year == _focusedMonth.year &&
+            event.startTime.month == _focusedMonth.month) {
+          _allEvents.add(event);
+        }
+        _error = null;
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        _error = 'Failed to create event';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _error = 'Failed to create event: $e';
+      _isLoading = false;
+      notifyListeners();
+      print(_error);
+      return false;
+    }
   }
 
-  void updateEvent(
+  /// Update existing event
+  Future<bool> updateEvent(
     String id, {
     String? title,
     String? description,
     DateTime? startTime,
     DateTime? endTime,
     String? color,
-  }) {
-    final success = _calendarService.updateEvent(
-      id,
-      title: title,
-      description: description,
-      startTime: startTime,
-      endTime: endTime,
-      color: color,
-    );
-    if (success) {
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final updatedEvent = await _calendarService.updateEvent(
+        id,
+        title: title,
+        description: description,
+        startTime: startTime,
+        endTime: endTime,
+        color: color,
+      );
+
+      if (updatedEvent != null) {
+        // Update in local list
+        final index = _allEvents.indexWhere((event) => event.id == id);
+        if (index != -1) {
+          _allEvents[index] = updatedEvent;
+        }
+        _error = null;
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        _error = 'Failed to update event';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _error = 'Failed to update event: $e';
+      _isLoading = false;
       notifyListeners();
+      print(_error);
+      return false;
     }
   }
 
-  void deleteEvent(String id) {
-    final success = _calendarService.deleteEvent(id);
-    if (success) {
+  /// Delete event
+  Future<bool> deleteEvent(String id) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final success = await _calendarService.deleteEvent(id);
+
+      if (success) {
+        // Remove from local list
+        _allEvents.removeWhere((event) => event.id == id);
+        _error = null;
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        _error = 'Failed to delete event';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _error = 'Failed to delete event: $e';
+      _isLoading = false;
       notifyListeners();
+      print(_error);
+      return false;
     }
   }
 
   CalendarEvent? getEventById(String id) {
-    return _calendarService.getEventById(id);
-  }
-
-  // Initialize with some sample events
-  void _initializeSampleEvents() {
-    final now = DateTime.now();
-
-    _calendarService.createEvent(
-      title: 'Team Meeting',
-      description: 'Weekly sync with the team',
-      startTime: DateTime(now.year, now.month, now.day, 10, 0),
-      endTime: DateTime(now.year, now.month, now.day, 11, 0),
-      color: '#C98938',
-    );
-
-    _calendarService.createEvent(
-      title: 'Lunch Break',
-      description: 'Time to recharge',
-      startTime: DateTime(now.year, now.month, now.day, 12, 0),
-      endTime: DateTime(now.year, now.month, now.day, 13, 0),
-      color: '#E5AD64',
-    );
-
-    _calendarService.createEvent(
-      title: 'Project Review',
-      description: 'Review Q4 progress',
-      startTime: DateTime(now.year, now.month, now.day + 1, 14, 0),
-      endTime: DateTime(now.year, now.month, now.day + 1, 15, 30),
-      color: '#9A5F23',
-    );
+    try {
+      return _allEvents.firstWhere((event) => event.id == id);
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -32,7 +32,9 @@ class ChronosApp extends StatelessWidget {
               ChatViewModel(context.read<ChatService>())..loadInitialMessages(),
         ),
 
-        Provider<CalendarService>(create: (_) => CalendarService()),
+        Provider<CalendarService>(
+          create: (context) => CalendarService(context.read<AuthService>()),
+        ),
         ChangeNotifierProvider<CalendarViewModel>(
           create: (context) => CalendarViewModel(context.read<CalendarService>()),
         ),

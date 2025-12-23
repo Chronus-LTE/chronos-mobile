@@ -343,7 +343,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
     }
   }
 
-  void _saveEvent() {
+  Future<void> _saveEvent() async {
     if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a title')),
@@ -376,9 +376,20 @@ class _EventFormDialogState extends State<EventFormDialog> {
 
     final viewModel = context.read<CalendarViewModel>();
 
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    bool success = false;
+
     if (widget.event != null) {
       // Update existing event
-      viewModel.updateEvent(
+      success = await viewModel.updateEvent(
         widget.event!.id,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim().isEmpty
@@ -390,7 +401,7 @@ class _EventFormDialogState extends State<EventFormDialog> {
       );
     } else {
       // Create new event
-      viewModel.createEvent(
+      success = await viewModel.createEvent(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim().isEmpty
             ? null
@@ -401,7 +412,23 @@ class _EventFormDialogState extends State<EventFormDialog> {
       );
     }
 
-    Navigator.pop(context);
+    // Close loading dialog
+    if (mounted) Navigator.pop(context);
+
+    if (success) {
+      // Close form dialog
+      if (mounted) Navigator.pop(context);
+    } else {
+      // Show error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(viewModel.error ?? 'Failed to save event'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Color _parseColor(String hexColor) {
