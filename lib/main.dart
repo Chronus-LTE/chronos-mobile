@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:chronus/core/theme/app_colors.dart';
+import 'package:chronus/core/services/api_client.dart';
 import 'package:chronus/features/auth/services/auth_service.dart';
 import 'package:chronus/features/auth/viewmodels/auth_view_model.dart';
 import 'package:chronus/features/calendar/services/calendar_service.dart';
 import 'package:chronus/features/calendar/viewmodels/calendar_view_model.dart';
+import 'package:chronus/features/email/services/email_service.dart';
+import 'package:chronus/features/email/viewmodels/email_view_model.dart';
 
 void main() {
   runApp(const ChronosApp());
@@ -26,6 +29,10 @@ class ChronosApp extends StatelessWidget {
           create: (context) => AuthViewModel(context.read<AuthService>()),
         ),
 
+        Provider<ApiClient>(
+          create: (context) => ApiClient(context.read<AuthService>()),
+        ),
+
         Provider<ChatService>(create: (_) => ChatService()),
         ChangeNotifierProvider<ChatViewModel>(
           create: (context) =>
@@ -37,6 +44,13 @@ class ChronosApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<CalendarViewModel>(
           create: (context) => CalendarViewModel(context.read<CalendarService>()),
+        ),
+
+        Provider<EmailService>(
+          create: (context) => EmailService(context.read<ApiClient>()),
+        ),
+        ChangeNotifierProvider<EmailViewModel>(
+          create: (context) => EmailViewModel(context.read<EmailService>()),
         ),
       ],
       child: MaterialApp(
